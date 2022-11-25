@@ -8,11 +8,13 @@ from .models import Task
 @api_view(['GET'])
 def apiOverview(request):
     api_url = {
-        'List':'/taskList',
+        'List':'/taskList(Please add a task at first)',
         'Detail view':'taskDetail/<str:pk>/',
-        'Create' :'/taskCreate',
-        'Update' :'/taskUpdate/<str:pk>/',
-        'Delete' :'/taskDelete/<str:pk>/',
+        'Add Task' :'/taskCreate/',
+        'Mark As Complete' :'/taskUpdate/<str:pk>/(Please update the Value to True if Completed)', 
+        'Delete Task' :'/taskDelete/<str:pk>/',
+        'Pending' :'/taskPending/',
+        'Completed' :'/taskCompleted/',
     }
     return Response(api_url)
 @api_view(['GET'])
@@ -50,5 +52,17 @@ def taskDelete(request,pk):
     task.delete()
     serializer = TaskSerializer(task,many=False)
     return Response(serializer.data)
+@api_view(['GET'])
+def taskPending(request):
+    task = Task.objects.filter(completed=False)
+    serializer = TaskSerializer(task,many=True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+def taskCompleted(request):
+    task = Task.objects.filter(completed=True)
+    serializer = TaskSerializer(task,many=True)
+    return Response(serializer.data)
+
 
 
